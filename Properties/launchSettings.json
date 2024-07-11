@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "TelegramNotifyBot": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
