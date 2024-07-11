@@ -1,29 +1,27 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 
-# Установите необходимые зависимости
+# пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         libssl1.1 \
     && rm -rf /var/lib/apt/lists/*
 
-# Копирование csproj и восстановление зависимостей
+# пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ csproj пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 COPY ["TelegramNotifyBot.csproj", "./"]
 RUN ls -la
 RUN dotnet restore --verbosity detailed
 
-# Копирование остального кода и сборка проекта
+# пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 COPY . ./
 RUN dotnet publish -c Release -o /app/out
 
 # Stage 2: Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:6.0-alpine AS runtime
 
-# Установите необходимые зависимости
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        libssl1.1 \
-    && rm -rf /var/lib/apt/lists/*
+# пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+RUN rm -rf /var/cache/apk/*
+RUN apk add libssl3 
 
 WORKDIR /app
 COPY --from=build /app/out .
