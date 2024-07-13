@@ -37,7 +37,7 @@ The bot expects incoming HTTP requests to have a JSON payload structured as foll
 git clone https://github.com/darksvesh/TelegramNotifyBot.git
 cd telegram-notify-bot
 docker build -t telegram-notify-bot .
-docker run -e TELEGRAM_BOT_TOKEN=MyValue -e TELEGRAM_BOT_USE_ENCRYPTION=0 -e TELEGRAM_BOT_ENCRYPTION_SECRET="MyValue" telegram-notify-bot:latest
+docker run -e TELEGRAM_BOT_TOKEN="MyValue" -e TELEGRAM_BOT_USE_ENCRYPTION=0 -e TELEGRAM_BOT_ENCRYPTION_SECRET="MyValue" telegram-notify-bot:latest
 ```
 ## Author notes
 I made this bot to send me technical notifications about current certain server status.
