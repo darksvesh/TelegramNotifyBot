@@ -20,11 +20,11 @@ public class WebService
         httpListener.Prefixes.Add("http://*:5000/message/");
         httpListener.Prefixes.Add("http://*:5000/healthcheck/");
         httpListener.Start();
-        Console.WriteLine("Listening for incoming requests...");
     }
 
     public async Task RunRequestHandler()
     {
+
         while(true){
             HttpListenerContext context = await httpListener.GetContextAsync();
             HttpListenerRequest request = context.Request;
@@ -36,29 +36,37 @@ public class WebService
     {
         if (request.Url.AbsolutePath == "/message")
         {
-            using var reader = new System.IO.StreamReader(context.Request.InputStream);
-            var requestBody = await reader.ReadToEndAsync();
-            var notification = JsonSerializer.Deserialize<Notification>(requestBody);
-
-            if (notification != null)
+            try
             {
-                if(encrypted == "1"){
-                    await notificationService.SendNotificationAsyncEncrypted(notification);
-                } 
+                using var reader = new System.IO.StreamReader(context.Request.InputStream);
+                var requestBody = await reader.ReadToEndAsync();
+                Notification notification = JsonSerializer.Deserialize<Notification>(requestBody);
+                if (notification != null)
+                {
+                    
+                    if(encrypted == "1")
+                    {
+                        await notificationService.SendNotificationAsyncEncrypted(notification);
+                    } 
+                    else
+                    {
+                        await notificationService.SendNotificationAsync(notification);
+                    }
+                    context.Response.StatusCode = 200;
+                    await context.Response.OutputStream.WriteAsync(System.Text.Encoding.UTF8.GetBytes("Notification sent."));
+                }
                 else
                 {
-                    await notificationService.SendNotificationAsync(notification);
+                    context.Response.StatusCode = 400;
+                    await context.Response.OutputStream.WriteAsync(System.Text.Encoding.UTF8.GetBytes("Invalid request."));
                 }
-                context.Response.StatusCode = 200;
-                await context.Response.OutputStream.WriteAsync(System.Text.Encoding.UTF8.GetBytes("Notification sent."));
             }
-            else
+            catch(Exception err)
             {
-                context.Response.StatusCode = 400;
-                await context.Response.OutputStream.WriteAsync(System.Text.Encoding.UTF8.GetBytes("Invalid request."));
+                Console.WriteLine(err.Message);    
             }
         }
-        else if(request.HttpMethod == "GET" && request.Url.AbsolutePath == "/healthcheck")
+        else if(request.Url.AbsolutePath == "/healthcheck")
         {
             await context.Response.OutputStream.WriteAsync(System.Text.Encoding.UTF8.GetBytes("OK"));
         }

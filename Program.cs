@@ -17,17 +17,17 @@ class Program
         settings.EncryptionSecret = Environment.GetEnvironmentVariable("TELEGRAM_BOT_ENCRYPTION_SECRET");
 
         TelegramBotService bot = new TelegramBotService(settings);
-        
+
         NotificationService notificationService = new NotificationService(bot);
-        
+
         EncryptionService.SetEncryptionKey(settings.EncryptionSecret);
 
         await bot.StartBot();
         
         WebService web = new WebService(notificationService, settings.UseMessageEncryption);
-        
-        await web.StartWebService();
-        
+
+        web.StartWebService();
+
         web.RunRequestHandler();
 
         Console.WriteLine("Awaiting connections...");

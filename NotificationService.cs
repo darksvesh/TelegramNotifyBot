@@ -4,7 +4,6 @@ public class NotificationService
     public NotificationService(TelegramBotService telegramBotService)
     {
         _telegramBotService = telegramBotService;
-        
     }
 
     public async Task SendNotificationAsyncEncrypted(Notification notify)
@@ -23,10 +22,8 @@ public class NotificationService
             }
         }
         catch (Exception err) {
-            Console.WriteLine("Catched wrongly encrypted message. Datetime format error.");
+            Console.WriteLine("Caught wrongly encrypted message.");
         }
-
-        
     }
     public async Task SendNotificationAsync(Notification notify)
     {

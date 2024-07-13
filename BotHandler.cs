@@ -33,7 +33,7 @@ class BotHandler {
         }
         else if (message.Text.ToLower() == "/token")
         {
-            string token = message.Chat.Id.ToString();//EncryptionService.Encrypt(message.Chat.Id.ToString());
+            string token = EncryptionService.Encrypt(message.Chat.Id.ToString());
             await botClient.SendTextMessageAsync(
                 chatId: message.Chat.Id,
                 text: $"Your token: {token}",
@@ -42,6 +42,8 @@ class BotHandler {
         }
         else
         {
+            //string token = EncryptionService.Decrypt(message.Text);
+
             await botClient.SendTextMessageAsync(
                 chatId: message.Chat.Id,
                 text: "Unknown command. Type /help to see available commands.",
