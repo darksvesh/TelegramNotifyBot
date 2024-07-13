@@ -12,21 +12,25 @@ class Program
         
         settings.TelegramBotToken = Environment.GetEnvironmentVariable("TELEGRAM_BOT_TOKEN");
         
-        var useMessageEncryption = Environment.GetEnvironmentVariable("TELEGRAM_BOT_USE_ENCRYPTION");
+        settings.UseMessageEncryption = Environment.GetEnvironmentVariable("TELEGRAM_BOT_USE_ENCRYPTION");
+
+        settings.EncryptionSecret = Environment.GetEnvironmentVariable("TELEGRAM_BOT_ENCRYPTION_SECRET");
 
         TelegramBotService bot = new TelegramBotService(settings);
         
         NotificationService notificationService = new NotificationService(bot);
         
+        EncryptionService.SetEncryptionKey(settings.EncryptionSecret);
+
         await bot.StartBot();
         
-        WebService web = new WebService(notificationService, useMessageEncryption);
+        WebService web = new WebService(notificationService, settings.UseMessageEncryption);
         
         await web.StartWebService();
         
         web.RunRequestHandler();
 
-        Console.WriteLine("Bot running...");
+        Console.WriteLine("Awaiting connections...");
 
         while(true)
         {

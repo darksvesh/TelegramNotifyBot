@@ -4,7 +4,12 @@ using System.Text;
 
 public static class EncryptionService
 {
-    private static readonly byte[] Key = Encoding.UTF8.GetBytes("ZzRFrHnhZZqxgRbP");
+    private static byte[] Key = Encoding.UTF8.GetBytes("");
+
+    public static void SetEncryptionKey(string encryptionSecret)
+    {
+        Key = Encoding.UTF8.GetBytes(encryptionSecret);
+    }
 
     public static string Encrypt(string plainText)
     {
