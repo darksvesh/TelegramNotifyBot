@@ -24,14 +24,14 @@ public class WebService
         httpListener = new HttpListener();
         httpListener.Prefixes.Add("http://*:5000/message/");
         httpListener.Prefixes.Add("http://*:5000/healthcheck/");
-        var tcpServerTask = Task.Run(() => httpListener.Start(token));
+        var tcpServerTask = Task.Run(() => httpListener.Start());
     }
 
     public async Task RunRequestHandler()
     {
 
         while(true){
-            if (tcpListener.Pending())
+            if (httpListener.Pending())
             {
                 HttpListenerContext context = await httpListener.GetContextAsync();
                 HttpListenerRequest request = context.Request;
