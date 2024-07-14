@@ -9,14 +9,10 @@ public class WebService
     private readonly NotificationService _notificationService;
     private string useEncryption = "0";
     private HttpListener httpListener;
-
-    private CancellationToken  token;
     public WebService(NotificationService notificationService, string useMessageEncryption)
     {
         _notificationService = notificationService;
         useEncryption = useMessageEncryption;
-        var cts = new CancellationTokenSource();
-        token = cts.Token;
     }
 
     public async Task StartWebService()
@@ -31,16 +27,10 @@ public class WebService
     {
 
         while(true){
-            if (httpListener.Pending())
-            {
-                HttpListenerContext context = await httpListener.GetContextAsync();
-                HttpListenerRequest request = context.Request;
-                _ = Task.Run(() => HandleRequestAsync(context, request, _notificationService, useEncryption));
-            }
-            else
-            {
-                await Task.Delay(10, token); // Добавление асинхронной задержки для снижения нагрузки на CPU
-            }
+            HttpListenerContext context = await httpListener.GetContextAsync();
+            HttpListenerRequest request = context.Request;
+            _ = Task.Run(() => HandleRequestAsync(context, request, _notificationService, useEncryption));
+            await Task.Delay(10);
         }
     }
 
