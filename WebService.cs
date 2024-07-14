@@ -10,7 +10,7 @@ public class WebService
     private string useEncryption = "0";
     private HttpListener httpListener;
 
-    private Cancellation token;
+    private CancellationToken  token;
     public WebService(NotificationService notificationService, string useMessageEncryption)
     {
         _notificationService = notificationService;
