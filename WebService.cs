@@ -23,7 +23,7 @@ public class WebService
         httpListener = new HttpListener();
         httpListener.Prefixes.Add("http://*:5000/message/");
         httpListener.Prefixes.Add("http://*:5000/healthcheck/");
-        var tcpServerTask = Task.Run(() => httpListener.Start(token);
+        var tcpServerTask = Task.Run(() => httpListener.Start(token));
     }
 
     public async Task RunRequestHandler()
