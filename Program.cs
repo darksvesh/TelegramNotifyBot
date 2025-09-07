@@ -28,13 +28,11 @@ class Program
 
         web.StartWebService();
 
-        web.RunRequestHandler();
-
         Console.WriteLine("Awaiting connections...");
 
         while(true)
         {
-
+            Thread.Sleep(10000);
         }
     }
 
