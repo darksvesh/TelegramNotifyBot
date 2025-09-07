@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using TelegramNotifyBot;
 public class WebService
 {
     private readonly NotificationService _notificationService;
@@ -20,13 +21,13 @@ public class WebService
         httpListener = new HttpListener();
         httpListener.Prefixes.Add("http://*:5000/message/");
         httpListener.Prefixes.Add("http://*:5000/healthcheck/");
-        Console.WriteLine("Starting web server on 5000 port");
+        Logger.WriteLine("Starting web server on 5000 port");
 
         var tcpServerTask = Task.Run(() => httpListener.Start());
         var count = 0;
         while (!httpListener.IsListening && count < 10)
         {
-            Console.WriteLine("Waiting server to start");
+            Logger.WriteLine("Waiting server to start");
             Thread.Sleep(500);
             count++;
         }
@@ -64,28 +65,35 @@ public class WebService
                     {
                         await notificationService.SendNotificationAsync(notification);
                     }
+                    Logger.WriteRequest("200: Notification sent.", request);
                     context.Response.StatusCode = 200;
                     await context.Response.OutputStream.WriteAsync(System.Text.Encoding.UTF8.GetBytes("Notification sent."));
                 }
                 else
                 {
+                    Logger.WriteRequest("400: Invalid request", request);
                     context.Response.StatusCode = 400;
                     await context.Response.OutputStream.WriteAsync(System.Text.Encoding.UTF8.GetBytes("Invalid request."));
                 }
             }
             catch(Exception err)
             {
-                Console.WriteLine(err.Message);    
+                Logger.WriteRequest("500: Internal error", request);
+                Logger.WriteLine(err.Message);
+                context.Response.StatusCode = 500;
+                await context.Response.OutputStream.WriteAsync(System.Text.Encoding.UTF8.GetBytes("Internal error."));
             }
         }
         else if(request.Url.AbsolutePath == "/healthcheck")
         {
-            Console.WriteLine("Healthcheck recieved.");
+
+            Logger.WriteRequest("200: Healthcheck recieved", request);
             context.Response.StatusCode = 200;
             await context.Response.OutputStream.WriteAsync(System.Text.Encoding.UTF8.GetBytes("OK"));
         }
         else
         {
+            Logger.WriteRequest("405: Method not allowed", request);
             context.Response.StatusCode = 405;
             await context.Response.OutputStream.WriteAsync(System.Text.Encoding.UTF8.GetBytes("Method not allowed."));
         }
